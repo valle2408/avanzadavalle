@@ -1,5 +1,7 @@
 from django.db import models  # CREA MODELOS PARA LA BD
 from django.contrib.auth.models import AbstractUser # EL ABSTRACT TRAE UNA CLASE DE DJANGO PARA USAR
+
+
 class Usuario(AbstractUser): # CREAMOS LA CLASE USUARIO
     usuario_id = models.AutoField(primary_key=True) #CAMPO USUARIO ID, ES NUMEROS AUTOMATICOS Y ES LLAVE PRIMARIA
     #username = models.CharField(max_length=150, unique=True) #CAMPO USERNAME Y NO SE PUEDE REPETIR

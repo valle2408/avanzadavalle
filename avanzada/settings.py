@@ -43,6 +43,12 @@ INSTALLED_APPS = [
 
 ]
 
+#LAS REDIRECCIONAMIENTOS PARA EL LOGUEO
+AUTH_USER_MODEL = 'usuarios.Usuario' # el modelo principal de usario sera mi modelo de usuario creado
+LOGIN_URL = '/usuarios/login' # a que pagina debe mandar cuando se necesita iniciar sesion
+LOGIN_REDIRECT_URL = '/usuarios/dashboard' # despues de iniciar sesion
+LOGOUT_REDIRECT_URL = '/usuarios/login' # lo que manda despues de cerrar sesion
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
