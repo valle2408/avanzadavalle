@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect # para el redireccionamiento
+from django.contrib.auth import authenticate, login, logout #para la verificacion , para el login y cierre
+
+# un midwillers para que oblique al usario esta autenticado
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .forms import FormularioLogin # DE LA CARPETA QUE CREAMOS IMPORTAMOS SU CLASE
 from .models import UsuarioRol, Rol
+
 #FUNCION DEL LOGIN
 def iniciar_sesion(request):
 
