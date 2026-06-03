@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>La Avanzada</title>
+    </head
+<body>
+    <h1>Iniciar Sesion</h1>
+    <form method="post"> <!--crea un formulario y envia los datos en post -->
+        {% csrf_token %} <!--seguridad csrf -->
+        {{ form.as_p }}  <!--muestra el formulario que mandamos desde viwes.py -->
+        <button type="'submit">Ingresar</button>
+    </form>
+</body>
+</html>
