@@ -24,7 +24,7 @@ def dashboard(request):
     for usuario_rol in roles_usuario:
 
         #obtenemos el rol que tiene
-        rol = usuario_rol.role
+        rol = usuario_rol.rol
 
         # recorremos los permisos por modulos 
         for modulo in permisos.keys():
@@ -40,7 +40,7 @@ def dashboard(request):
     context = {
         'usuario': request.user,
         'permisos': permisos,
-        'roles': [ur.usuario_rol.rol.nombre_rol for ur in roles_usuario],
+        'roles': [ur.rol.nombre_rol for ur in roles_usuario],
         
     }
     return render(request, 'principal/dashboard.html', context)
