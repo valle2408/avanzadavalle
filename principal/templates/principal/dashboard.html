@@ -1,0 +1,74 @@
+<html> La Avanzada | Dashboard</html>
+{% block content %}
+<nav>
+    <a href = "#">Empresa de Cafe La Avanzada</a>
+    <span>Bienvenido, {{ usuario.first_name|default:usuario.username}}</span>
+    <a href="{% url 'logout' %}">Cerrar Sesion</a>
+</nav>
+<h2>Menu - Dashboard</h2>
+<p>Usuario con rol de: <strong> {{ roles|join:", "}}</strong></p>
+<div style = "display: flex; flex-wrap: wrap; gap: 10px">
+    {% if permisos.registrar_compras_cafe > 0 %}
+    <div style="border: 1px solid #000; padding: 10px; width: 200px;">
+        <h3>Registrar Nueva compra</h3>
+        <p>{% if permisos.registrar_compras_cafe == 1 %}solo ver{% else %}hacer cambios{% endif %}</p>
+        <a href="#">Acceder</a>
+    </div>
+    {% endif %}
+<div style = "display: flex; flex-wrap: wrap; gap: 10px">
+    {% if permisos.historial_compras > 0 %}
+    <div style="border: 1px solid #000; padding: 10px; width: 200px;">
+        <h3>Historial de compras</h3>
+        <p>{% if permisos.historial_compras == 1 %}solo ver{% else %}hacer cambios{% endif %}</p>
+        <a href="#">Acceder</a>
+    </div>
+    {% endif %}
+<div style = "display: flex; flex-wrap: wrap; gap: 10px">
+    {% if permisos.comunidades > 0 %}
+    <div style="border: 1px solid #000; padding: 10px; width: 200px;">
+        <h3>Comunidades</h3>
+        <p>{% if permisos.comunidades == 1 %}Solo ver{% else %}hacer cambios{% endif %}</p>
+        <a href="#">Acceder</a>
+    </div>
+    {% endif %}
+<div style = "display: flex; flex-wrap: wrap; gap: 10px">
+    {% if permisos.productores > 0 %}
+    <div style="border: 1px solid #000; padding: 10px; width: 200px;">
+        <h3>Productores</h3>
+        <p>{% if permisos.productores == 1 %}Solo ver{% else %}hacer cambios{% endif %}</p>
+        <a href="#">Acceder</a>
+    </div>
+    {% endif %}
+<div style = "display: flex; flex-wrap: wrap; gap: 10px">
+    {% if permisos.registro_ventas_cafe > 0 %}
+    <div style="border: 1px solid #000; padding: 10px; width: 200px;">
+        <h3>registro de ventas de cafe</h3>
+        <p>{% if permisos.registro_ventas_cafe == 1 %}Solo ver{% else %}Hacer cambios{% endif %}</p>
+        <a href="#">Acceder</a>
+    </div>
+    {% endif %}
+<div style = "display: flex; flex-wrap: wrap; gap: 10px">
+    {% if permisos.analisis_predicciones > 0 %}
+    <div style="border: 1px solid #000; padding: 10px; width: 200px;">
+        <h3>Analisis y predicciones</h3>
+        <p>{% if permisos.analisis_predicciones == 1 %}Solo ver{% else %}Hacer cambios{% endif %}</p>
+        <a href="#">Acceder</a>
+    </div>
+    {% endif %}
+    <div style = "display: flex; flex-wrap: wrap; gap: 10px">
+    {% if permisos.roles_usuarios > 0 %}
+    <div style="border: 1px solid #000; padding: 10px; width: 200px;">
+        <h3>Roles y usuarios</h3>
+        <p>{% if permisos.roles_usuarios == 1 %}Solo ver{% else %}Hacer cambios{% endif %}</p>
+        <a href="#">Acceder</a>
+    </div>
+    {% endif %}
+</div>
+{% if permisos.registrar_compras_cafe == 0 and permisos.historial_compras == 0 and permisos.comunidades == 0 and permisos.productores == 0 and permisos.registro_ventas_cafe == 0 and permisos.analisis_predicciones == 0 and permisos.roles_usuarios == 0 %}
+<div style="border: 1px solid #ff0000; padding: 10px; margin-top: 20px;">
+    <h4>No tiene permisos asignados</h4>
+    <p> usted no tiene permisos asignados, contacte con el administrador
+    </p>
+</div>
+{% endif %}
+{% endblock %}
