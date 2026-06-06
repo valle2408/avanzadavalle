@@ -29,7 +29,7 @@ def iniciar_sesion(request):
                 login(request,user)
                 return redirect('dashboard')
             else:
-                messages.error(request, 'Usuario y Contraseña Incorrectos')
+                messages.error(request, 'Usuario o Contraseña Incorrectos')
     else:
         form = FormularioLogin()
     return render(request, 'usuarios/login.html', {'form': form})

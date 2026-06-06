@@ -4,12 +4,10 @@ from usuarios.models import UsuarioRol
 
 #inicio de sesion requerida para esto
 @login_required 
-
-
 def dashboard(request):
 
 
-    roles_usuario = UsuarioRol.objects.filter(usuario=request.user)
+    roles_usuario = UsuarioRol.objects.filter(usuario=request.user) # buscael rol que usuario inicio sesion
     permisos = {
         'registrar_compras_cafe': 0,
         'historial_compras': 0,
