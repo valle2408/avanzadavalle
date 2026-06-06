@@ -1,0 +1,177 @@
+{% extends "principal/base.html" %}<!-- exportamos la cabecera de principal -->
+{% load static %} <!-- para imagenes o cosas estaticas-->
+
+{% block title %}Comunidades{% endblock %}
+
+{% block content %}
+
+<h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-gray-400 pb-2">
+    Comunidades
+</h2>
+
+<!-- mensajes para el crud -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="mb-4 p-4 rounded bg-green-100 text-green-700 border border-green-400">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!-- filtro buscador-->
+<div class="mb-6 p-4 border rounded-lg bg-gray-50">
+    <form method="get" action="{% url 'comunidades:lista_comunidades' %}" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        
+        <!-- buscador por nombre -->
+        <div class="col-span-1 md:col-span-2">
+            <label for="nombre_comunidad" class="block text-sm font-medium text-gray-700">
+                Nombre de la comunidad
+            </label>
+
+            <input 
+                type="text" 
+                name="nombre_comunidad" 
+                id="nombre_comunidad" 
+                value="{{ request.GET.nombre_comunidad }}" 
+                placeholder="Buscar comunidad"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+        </div>
+
+        <!-- filtros -->
+        <div class="col-span-1 md:col-span-2">
+            <div class="flex items-center justify-between gap-2">
+                
+                <div class="flex space-x-2">
+                    <button 
+                        type="submit" 
+                        class="w-full md:w-auto bg-[#233b6e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#1a2c53] transition-colors duration-300">
+                        Buscar
+                    </button>
+
+                    <a 
+                        href="{% url 'comunidades:lista_comunidades' %}" 
+                        class="w-full md:w-auto bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition-colors duration-300 text-center">
+                        Limpiar
+                    </a>
+                </div>
+
+                <!-- boton para crear y si tiene acceso mas de dos debe ser-->
+                {% if permiso >= 2 %}
+                <a 
+                    href="{% url 'comunidades:crear_comunidad' %}" 
+                    class="bg-[#233b6e] text-white font-semibold py-2 px-6 rounded-lg text-center transition-colors duration-300 hover:bg-[#1a2c53]">
+                    Crear Comunidad
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+
+<!--tabla de comunidades-->
+<div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+        
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    N°
+                </th>
+
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Comunidad
+                </th>
+
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                </th>
+
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Creado por
+                </th>
+
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Fecha creación
+                </th>
+
+                {% if permiso >= 2 %} <!--- permisos mas de dos para poder editar o elimianr -->
+                <th class="relative px-6 py-3">
+                    Acción
+                </th>
+                {% endif %}
+            </tr>
+        </thead>
+
+        <tbody class="bg-white divide-y divide-gray-200">
+            {% for comunidad in comunidades %}
+            <tr>
+                <!--numeracion-->
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {{ forloop.counter }}
+                </td>
+
+                <!--nombre de la comunadd-->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ comunidad.nombre_comunidad }}
+                </td>
+
+                <!-- estados inactivoo oactivo-->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if comunidad.estado == 'Activo' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                        {{ comunidad.estado }}
+                    </span>
+                </td>
+
+                <!--usuario creador-->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {% if comunidad.creado_por %}
+                        {{ comunidad.creado_por.username }} <!--esto jala el nombre -->
+                    {% else %}
+                        Sin usuario
+                    {% endif %}
+                </td>
+
+                <!-- fecha de la creacion-->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ comunidad.fecha_creacion|date:"d/m/Y H:i" }}
+                </td>
+
+                <!--acciones que teienen los roles de mas de dos-->
+                {% if permiso >= 2 %}
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <a 
+                        href="{% url 'comunidades:editar_comunidad' comunidad.pk %}" 
+                        class="text-indigo-600 hover:text-indigo-900 mr-4">
+                        Editar
+                    </a>
+
+                    <!--eliminacion borrar si es necesario o comentarlo , pensar bien -->
+                    <form 
+                        action="{% url 'comunidades:eliminar_comunidad' comunidad.pk %}" 
+                        method="post" 
+                        class="inline-block">
+                        {% csrf_token %}
+                        <button 
+                            type="submit" 
+                            class="text-red-600 hover:text-red-900 transition-colors duration-300"
+                            onclick="return confirm('¿Está seguro de eliminar esta comunidad?')">
+                            Eliminar
+                        </button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"> <!--mensaje si no hay datos en la tabla -->
+                    No se encontraron comunidades registradas.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

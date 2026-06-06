@@ -1,0 +1,104 @@
+<!--formulario para crear y editar comunidades para que realizar dos  -->
+{% extends "principal/base.html" %} <!-- exportamos la cabecera  -->
+{% load static %}<!-- si queremos imagenes poner   -->
+
+{% block title %} <!-- titulo dependiendo  -->
+{% if comunidad %}Editar comunidad{% else %}Crear comunidad{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-gray-400 pb-2">
+    Comunidades
+</h2>
+
+<div class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md mt-10">
+
+    <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-gray-400 pb-2">
+        {% if comunidad %}Editar comunidad{% else %}Crear comunidad{% endif %} <!-- titulo  -->
+    </h2>
+
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+
+        <!-- para errores  -->
+        {% if form.non_field_errors %}
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded" role="alert">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="space-y-4">
+
+            <!--nombre de la cmunidad-->
+            <div class="flex items-center space-x-4">
+                <label for="{{ form.nombre_comunidad.id_for_label }}" class="block text-sm font-medium text-gray-700 w-1/3">
+                    Nombre de la comunidad
+                </label>
+
+                <div class="mt-1 w-2/3">
+                    <input 
+                        type="text" 
+                        name="{{ form.nombre_comunidad.html_name }}" 
+                        id="{{ form.nombre_comunidad.id_for_label }}" 
+                        value="{{ form.nombre_comunidad.value|default:'' }}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233b6e]"
+                    >
+
+                    {% if form.nombre_comunidad.errors %}
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-2 mt-1 rounded text-sm">
+                        {{ form.nombre_comunidad.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- el estado de la comnidad si esta activo o inactivo-->
+            <div class="flex items-center space-x-4">
+                <label for="{{ form.estado.id_for_label }}" class="block text-sm font-medium text-gray-700 w-1/3">
+                    Estado
+                </label>
+
+                <div class="mt-1 w-2/3">
+                    <select 
+                        name="{{ form.estado.html_name }}" 
+                        id="{{ form.estado.id_for_label }}" 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233b6e]"
+                    >
+                        <option value="Activo" {% if form.estado.value == 'Activo' %}selected{% endif %}>
+                            Activo
+                        </option>
+
+                        <option value="Inactivo" {% if form.estado.value == 'Inactivo' %}selected{% endif %}>
+                            Inactivo
+                        </option>
+                    </select>
+
+                    {% if form.estado.errors %}
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-2 mt-1 rounded text-sm">
+                        {{ form.estado.errors }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- botons de cancelar o realizar los cambios-->
+        <div class="flex justify-end space-x-4">
+            <a 
+                href="{% url 'comunidades:lista_comunidades' %}" 
+                class="bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition-colors duration-300 hover:bg-gray-400">
+                Cancelar
+            </a>
+
+            <button 
+                type="submit" 
+                class="bg-[#233b6e] text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-300 hover:bg-[#1a2c53]">
+                {% if comunidad %}Guardar cambios{% else %}Crear{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock content %}
