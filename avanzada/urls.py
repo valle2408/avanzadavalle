@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls), # ruta del admin
     path('',include('usuarios.urls')), # rutas de los uusuarios
     path('',include('principal.urls')), # rutas del dashboard o principal
+    path('comunidades/', include('comunidades.urls')), # de la comunidad
 ]
