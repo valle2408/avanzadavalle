@@ -2,7 +2,7 @@
 {% extends "principal/base.html" %} <!-- exportamos la cabecera  -->
 {% load static %}<!-- si queremos imagenes poner   -->
 
-{% block title %} <!-- titulo dependiendo  -->
+{% block title %} 
 {% if comunidad %}Editar comunidad{% else %}Crear comunidad{% endif %}
 {% endblock %}
 
@@ -18,7 +18,7 @@
         {% if comunidad %}Editar comunidad{% else %}Crear comunidad{% endif %} <!-- titulo  -->
     </h2>
 
-    <form method="post" class="space-y-6">
+    <form method="post" autocomplete="off" class="space-y-6">
         {% csrf_token %}
 
         <!-- para errores  -->
@@ -42,6 +42,7 @@
                         name="{{ form.nombre_comunidad.html_name }}" 
                         id="{{ form.nombre_comunidad.id_for_label }}" 
                         value="{{ form.nombre_comunidad.value|default:'' }}"
+                        autocomplete="off"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#233b6e]"
                     >
 

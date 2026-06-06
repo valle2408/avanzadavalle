@@ -10,5 +10,6 @@ urlpatterns = [
     path('crear/', views.crear_comunidad, name='crear_comunidad'), # para crear
     path('<int:pk>/editar/', views.editar_comunidad, name='editar_comunidad'),# para editar
     path('<int:pk>/eliminar/', views.eliminar_comunidad, name='eliminar_comunidad'), # para eliminar pensarlo bien aun
+    path('exportar/pdf/', views.exportar_comunidades_pdf, name='exportar_comunidades_pdf'), # paa los pdfs
     
 ]
