@@ -16,10 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin # importa el panel de adminsitracion
 from django.urls import path, include # para incluir rutas y otras rutas
+from django.views.generic import RedirectView # con esto directo a login nos mandara
 
 urlpatterns = [
     path('admin/', admin.site.urls), # ruta del admin
     path('',include('usuarios.urls')), # rutas de los uusuarios
     path('',include('principal.urls')), # rutas del dashboard o principal
     path('comunidades/', include('comunidades.urls')), # de la comunidad
+    path('', RedirectView.as_view(pattern_name='login', permanent=False)), # para la redirecciona al login directamente
 ]

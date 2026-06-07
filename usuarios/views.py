@@ -37,5 +37,5 @@ def iniciar_sesion(request):
 @login_required
 def cerrar_sesion(request):
     logout(request)
-    messages.success(request, 'Cierre de Sesion exitoso')
+    #messages.success(request, 'Cierre de Sesion exitoso') # cuando te deslogeuas y logeuas de vuelta manda este mensaje asi que esta mal
     return redirect ('login')

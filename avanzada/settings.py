@@ -46,9 +46,9 @@ INSTALLED_APPS = [
 
 #LAS REDIRECCIONAMIENTOS PARA EL LOGUEO
 AUTH_USER_MODEL = 'usuarios.Usuario' # el modelo principal de usario sera mi modelo de usuario creado
-LOGIN_URL = '/usuarios/login' # a que pagina debe mandar cuando se necesita iniciar sesion
-LOGIN_REDIRECT_URL = '/usuarios/dashboard' # despues de iniciar sesion
-LOGOUT_REDIRECT_URL = '/usuarios/login' # lo que manda despues de cerrar sesion
+LOGIN_URL = '/login' # a que pagina debe mandar cuando se necesita iniciar sesion
+LOGIN_REDIRECT_URL = '/dashboard' # despues de iniciar sesion
+LOGOUT_REDIRECT_URL = '/login' # lo que manda despues de cerrar sesion
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -132,3 +132,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Seguridad de sesión
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 300
+SESSION_SAVE_EVERY_REQUEST = True
