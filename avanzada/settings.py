@@ -72,6 +72,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'principal.context_processors.obtener_permisos', #metemos esto para que tengamos mas acciones en los html que hagamos
             ],
         },
     },
