@@ -1,0 +1,187 @@
+{% extends 'principal/base.html' %}
+
+{% block title %}Detalle del Productor{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto">
+
+    <!-- el encabezado -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">
+                Productor: {{ productor.nombre_completo }}
+            </h1>
+            <p class="text-gray-600 mt-1">
+                Información general del productor registrado
+            </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+
+            <a href="{% url 'productores:lista_productores' %}"
+               class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-center">
+                Volver
+            </a>
+
+            {% if permisos.productores >= 2 %} 
+            <a href="{% url 'productores:editar_productor' productor.pk %}"
+               class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow text-center">
+                Editar datos
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- informacion basica -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                Datos del productor
+            </h2>
+
+            <div class="space-y-3">
+
+                <p>
+                    <span class="font-semibold text-gray-700">Código/Usuario:</span>
+                    {{ productor.codigo_productor }}
+                </p>
+
+                <p>
+                    <span class="font-semibold text-gray-700">Nombre completo:</span>
+                    {{ productor.nombre_completo }}
+                </p>
+
+                <p>
+                    <span class="font-semibold text-gray-700">Comunidad:</span>
+                    {{ productor.comunidad.nombre_comunidad }}
+                </p>
+
+                <p>
+                    <span class="font-semibold text-gray-700">Estado:</span>
+                    {{ productor.estado }}
+                </p>
+
+                <p>
+                    <span class="font-semibold text-gray-700">Fecha de registro:</span>
+                    {{ productor.fecha_registro|date:"d/m/Y H:i" }}
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- lo de las compras -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+
+            <h2 class="text-xl font-bold text-gray-800 mb-4">
+                Resumen comercial del Productor
+            </h2>
+
+            <div class="space-y-3">
+
+                <p>
+                    <span class="font-semibold text-gray-700">Total de compras:</span>
+                    {{ total_compras }}
+                </p>
+
+                <p>
+                    <span class="font-semibold text-gray-700">Total de libras entregadas:</span>
+                    {{ total_libras }} lb
+                </p>
+
+                <p>
+                    <span class="font-semibold text-gray-700">Total pagado al Productor:</span>
+                    {{ total_pagado }} Bs
+                </p>
+
+                <p>
+                    <span class="font-semibold text-gray-700">Última compra realizada:</span>
+                    {% if ultima_compra %}
+                        {{ ultima_compra }}
+                    {% else %}
+                        Sin compras
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- compras del productor en el detalle -->
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+        <div class="p-4 border-b">
+
+            <h2 class="text-xl font-bold text-gray-800">
+                Compras realizadas a este productor
+            </h2>
+
+            <p class="text-gray-600 mt-1">
+                Esta sección se completará cuando se implemente Registrar compra de café.
+            </p>
+
+        </div>
+
+        <!-- Buscador por fecha preparado para el futuro -->
+        <div class="p-4 border-b">
+
+            <form method="get" class="flex flex-col md:flex-row gap-3">
+
+                <input type="date"
+                       name="fecha"
+                       value="{{ request.GET.fecha }}"
+                       class="w-full md:w-64 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+                <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow">
+                    Buscar
+                </button>
+
+                <a href="{% url 'productores:detalle_productor' productor.pk %}"
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow text-center">
+                    Limpiar
+                </a>
+
+            </form>
+
+        </div>
+
+        <div class="overflow-x-auto">
+
+            <table class="min-w-full border-collapse">
+
+                <thead class="bg-green-700 text-white">
+                    <tr>
+                        <th class="px-4 py-3 text-left">N°</th>
+                        <th class="px-4 py-3 text-left">Fecha de compra</th>
+                        <th class="px-4 py-3 text-left">Ver recibo</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td colspan="3" class="px-4 py-6 text-center text-gray-500">
+                            Este productor aún no tiene compras registradas.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
