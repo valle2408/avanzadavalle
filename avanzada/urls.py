@@ -25,4 +25,5 @@ urlpatterns = [
     path('comunidades/', include('comunidades.urls')), # de la comunidad
     path('', RedirectView.as_view(pattern_name='login', permanent=False)), # para la redirecciona al login directamente
     path('productores/', include('productores.urls')), # agregamos las acciones de productres
+    path('compras/', include('compras.urls')),# para las compras
 ]
