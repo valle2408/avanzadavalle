@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'principal',
     'usuarios',
     'comunidades',
+    'productores',
 
 ]
 
