@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+#from django.contrib import messages
 from django.core.paginator import Paginator
 
 from .models import Productor
@@ -127,8 +127,7 @@ def editar_productor(request, pk):
 
             productor.save()
 
-            messages.success(request, 'Productor editado correctamente.')
-            return redirect('productores:detalle_productor', pk=productor.pk)
+            return redirect(f'/productores/{productor.pk}/detalle/?editado=1')
 
     else:
         form = FormularioProductor(instance=productor)
