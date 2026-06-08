@@ -1,0 +1,148 @@
+{% extends 'principal/base.html' %}
+
+{% block title %}Editar Productor{% endblock %}
+
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+
+    <!--el encabezado -->
+    <div class="mb-6">
+
+        <h1 class="text-3xl font-bold text-gray-800">
+            Editar productor
+        </h1>
+
+        <p class="text-gray-600 mt-1">
+            Solo se pueden modificar los datos básicos del productor
+        </p>
+
+    </div>
+
+    <!-- datos que no se puede editar -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+
+        <h2 class="font-bold text-blue-800 mb-2">
+            Datos del sistema
+        </h2>
+
+        <p class="text-blue-800">
+            <span class="font-semibold">Código/Usuario:</span>
+            {{ productor.codigo_productor }}
+        </p>
+
+        <p class="text-blue-800">
+            <span class="font-semibold">Fecha de registro:</span>
+            {{ productor.fecha_registro|date:"d/m/Y H:i" }}
+        </p>
+
+        <p class="text-blue-800 mt-2 text-sm">
+            Estos datos no se editan porque son generados por el sistema y se relacionan con el acceso del productor.
+        </p>
+
+    </div>
+
+    <!-- formulario de edicion-->
+    <div class="bg-white rounded-lg shadow-md p-6">
+
+        <form method="post" autocomplete="off">
+
+            {% csrf_token %}
+
+            <!--el nombre -->
+            <div class="mb-4">
+                <label for="{{ form.nombre.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+                    Nombre
+                </label>
+
+                {{ form.nombre }}
+
+                {% if form.nombre.errors %}
+                <p class="text-red-600 text-sm mt-1">
+                    {{ form.nombre.errors }}
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- el apellido paterno -->
+            <div class="mb-4">
+                <label for="{{ form.apellido_paterno.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+                    Apellido paterno
+                </label>
+
+                {{ form.apellido_paterno }}
+
+                {% if form.apellido_paterno.errors %}
+                <p class="text-red-600 text-sm mt-1">
+                    {{ form.apellido_paterno.errors }}
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- el apaellido materno -->
+            <div class="mb-4">
+                <label for="{{ form.apellido_materno.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+                    Apellido materno
+                </label>
+
+                {{ form.apellido_materno }}
+
+                {% if form.apellido_materno.errors %}
+                <p class="text-red-600 text-sm mt-1">
+                    {{ form.apellido_materno.errors }}
+                </p>
+                {% endif %}
+            </div>
+
+            <!--comunidad -->
+            <div class="mb-4">
+                <label for="{{ form.comunidad.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+                    Comunidad
+                </label>
+
+                {{ form.comunidad }}
+
+                {% if form.comunidad.errors %}
+                <p class="text-red-600 text-sm mt-1">
+                    {{ form.comunidad.errors }}
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- estado -->
+            <div class="mb-6">
+                <label for="{{ form.estado.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+                    Estado
+                </label>
+
+                {{ form.estado }}
+
+                {% if form.estado.errors %}
+                <p class="text-red-600 text-sm mt-1">
+                    {{ form.estado.errors }}
+                </p>
+                {% endif %}
+            </div>
+
+            <!-- los botones -->
+            <div class="flex flex-col sm:flex-row gap-3">
+
+                <button type="submit"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow">
+                    Guardar cambios
+                </button>
+
+                <a href="{% url 'productores:detalle_productor' productor.pk %}"
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow text-center">
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
