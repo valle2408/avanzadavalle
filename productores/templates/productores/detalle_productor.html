@@ -27,7 +27,7 @@
 
             {% if permisos.productores >= 2 %} 
             <a href="{% url 'productores:editar_productor' productor.pk %}"
-               class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow text-center">
+               class="bg-[#233b6e] hover:bg-[#1a2c53] text-white px-4 py-2 rounded-lg shadow text-center transition-colors duration-300">
                 Editar datos
             </a>
             {% endif %}
@@ -141,7 +141,7 @@
                        class="w-full md:w-64 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
 
                 <button type="submit"
-                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow">
+                        class="w-full md:w-auto bg-[#233b6e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#1a2c53] transition-colors duration-300">
                     Buscar
                 </button>
 
@@ -158,11 +158,11 @@
 
             <table class="min-w-full border-collapse">
 
-                <thead class="bg-green-700 text-white">
+                <thead class="bg-gray-50 text-gray-600 uppercase text-sm">
                     <tr>
-                        <th class="px-4 py-3 text-left">N°</th>
-                        <th class="px-4 py-3 text-left">Fecha de compra</th>
-                        <th class="px-4 py-3 text-left">Ver recibo</th>
+                        <th class="px-4 py-4 text-left font-semibold">N°</th>
+                        <th class="px-4 py-4 text-left font-semibold">Fecha de compra</th>
+                        <th class="px-4 py-4 text-left font-semibold">Ver recibo</th>
                     </tr>
                 </thead>
 
