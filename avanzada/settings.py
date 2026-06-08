@@ -133,7 +133,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Seguridad de sesión
+# Seguridad de sesión hecha por valle
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 300
+SESSION_COOKIE_AGE = 300 
 SESSION_SAVE_EVERY_REQUEST = True
