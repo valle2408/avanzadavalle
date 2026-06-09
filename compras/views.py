@@ -2,7 +2,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import random
 import string
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -41,6 +41,25 @@ def obtener_permiso_registrar_compras(usuario):
 
     return permiso_maximo
 
+# Función para obtener el permiso del usuario en Historial de compras.
+# 0 = Sin acceso
+# 1 = Solo ver
+# 2 = Acceso administrativo
+def obtener_permiso_historial_compras(usuario):
+
+    roles_usuario = UsuarioRol.objects.filter(usuario=usuario)
+
+    permiso_maximo = 0
+
+    for usuario_rol in roles_usuario:
+        rol = usuario_rol.rol
+
+        permiso_actual = getattr(rol, 'historial_compras', 0)
+
+        if permiso_actual > permiso_maximo:
+            permiso_maximo = permiso_actual
+
+    return permiso_maximo
 
 # Normaliza textos de nombres y apellidos.
 # Ejemplo: "  juan   carlos " -> "Juan Carlos"
@@ -283,7 +302,7 @@ def nueva_compra(request):
     else:
         form = FormularioCompraCafe()
 
-        # Listas para autocompletado simple de productores existentes.
+    # Listas para autocompletado simple de productores existentes.
     # Solo sirven como sugerencias visuales; no cambian la lógica principal.
     nombres_productores = Productor.objects.values_list(
         'nombre', flat=True
@@ -317,15 +336,28 @@ def nueva_compra(request):
 @login_required
 def recibo_compra_pdf(request, pk):
 
-    permiso = obtener_permiso_registrar_compras(request.user)
+    compra = get_object_or_404(CompraCafe, pk=pk)
 
-    # Por ahora permitimos ver el recibo a usuarios con acceso al módulo.
-    # Más adelante, cuando hagamos el historial del productor,
-    # afinaremos para que el productor solo vea sus propios recibos.
-    if permiso == 0:
+    permiso_registrar_compras = obtener_permiso_registrar_compras(request.user)
+    permiso_historial_compras = obtener_permiso_historial_compras(request.user)
+
+    # Administrador:
+    # Puede ver cualquier recibo si tiene permiso administrativo
+    # en Historial de compras o en Registrar compras.
+    es_administrador = (
+        permiso_historial_compras >= 2 or
+        permiso_registrar_compras >= 2
+    )
+
+    # Productor:
+    # Puede ver solo sus propios recibos si tiene permiso para historial.
+    es_recibo_propio = (
+        permiso_historial_compras >= 1 and
+        compra.productor.usuario_id == request.user.pk
+    )
+
+    if not es_administrador and not es_recibo_propio:
         return redirect('dashboard')
-
-    compra = CompraCafe.objects.get(pk=pk)
 
     # Tamaño pequeño tipo ticket.
     # 80 mm de ancho x 140 mm de alto.
