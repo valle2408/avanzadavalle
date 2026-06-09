@@ -111,7 +111,7 @@
                 <p>
                     <span class="font-semibold text-gray-700">Última compra realizada:</span>
                     {% if ultima_compra %}
-                        {{ ultima_compra }}
+                        {{ ultima_compra.fecha_compra|date:"d/m/Y" }}
                     {% else %}
                         Sin compras
                     {% endif %}
@@ -170,17 +170,49 @@
                     <tr>
                         <th class="px-4 py-4 text-left font-semibold">N°</th>
                         <th class="px-4 py-4 text-left font-semibold">Fecha de compra</th>
+                        <th class="px-4 py-4 text-left font-semibold">Libras</th>
+                        <th class="px-4 py-4 text-left font-semibold">Total pagado</th>
                         <th class="px-4 py-4 text-left font-semibold">Ver recibo</th>
                     </tr>
                 </thead>
 
                 <tbody>
 
+                    {% for compra in compras %}
+                    <tr class="border-b hover:bg-gray-50">
+
+                        <td class="px-4 py-3">
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td class="px-4 py-3">
+                            {{ compra.fecha_compra|date:"d/m/Y" }}
+                        </td>
+
+                        <td class="px-4 py-3">
+                            {{ compra.total_libras }} lb
+                        </td>
+
+                        <td class="px-4 py-3">
+                            {{ compra.total_pagado }} Bs
+                        </td>
+
+                        <td class="px-4 py-3">
+                            <button type="button"
+                                    class="bg-gray-400 text-white px-3 py-1 rounded shadow cursor-not-allowed"
+                                    disable>
+                                Pendiente
+                            </button>
+                        </td>
+                    </tr>
+                 {% empty %}
+
                     <tr>
-                        <td colspan="3" class="px-4 py-6 text-center text-gray-500">
+                        <td colspan="5" class="px-4 py-6 text-center text-gray-500">
                             Este productor aún no tiene compras registradas.
                         </td>
                     </tr>
+                 {% endfor %}
 
                 </tbody>
 
