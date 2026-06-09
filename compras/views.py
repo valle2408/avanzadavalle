@@ -283,12 +283,32 @@ def nueva_compra(request):
     else:
         form = FormularioCompraCafe()
 
+        # Listas para autocompletado simple de productores existentes.
+    # Solo sirven como sugerencias visuales; no cambian la lógica principal.
+    nombres_productores = Productor.objects.values_list(
+        'nombre', flat=True
+    ).distinct().order_by('nombre')
+
+    apellidos_paternos = Productor.objects.values_list(
+        'apellido_paterno', flat=True
+    ).distinct().order_by('apellido_paterno')
+
+    apellidos_maternos = Productor.objects.exclude(
+        apellido_materno=''
+    ).values_list(
+        'apellido_materno', flat=True
+    ).distinct().order_by('apellido_materno')
+
     contexto = {
         'form': form,
         'credenciales_nuevo_productor': credenciales_nuevo_productor,
         'mensaje_error': mensaje_error,
         'compra_registrada': compra_registrada,
         'fecha_hoy': timezone.localdate(),
+
+        'nombres_productores': nombres_productores,
+        'apellidos_paternos': apellidos_paternos,
+        'apellidos_maternos': apellidos_maternos,
     }
 
     return render(request, 'compras/nueva_compra.html', contexto)

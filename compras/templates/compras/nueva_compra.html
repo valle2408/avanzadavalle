@@ -112,29 +112,36 @@
         </div>
 
         <!-- Nombre -->
-        <div>
+        <div class="md:col-span-2">
           <label
-            for="{{ form.nombre.id_for_label }}"
-            class="block text-gray-700 font-semibold mb-2"
-          >
+            for="{{ form.nombre.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
             Nombre del productor
           </label>
 
-          {{ form.nombre }} {% if form.nombre.errors %}
+          {{ form.nombre }}
+          <datalist id="lista-nombres-productores">
+            {% for nombre in nombres_productores %}
+                <option value="{{ nombre }}"></option>
+            {% endfor %}
+          </datalist>
+          
+          {% if form.nombre.errors %}
           <p class="text-red-600 text-sm mt-1">{{ form.nombre.errors }}</p>
           {% endif %}
         </div>
 
         <!-- Apellido paterno -->
         <div>
-          <label
-            for="{{ form.apellido_paterno.id_for_label }}"
-            class="block text-gray-700 font-semibold mb-2"
-          >
+          <label for="{{ form.apellido_paterno.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
             Apellido paterno
           </label>
-
-          {{ form.apellido_paterno }} {% if form.apellido_paterno.errors %}
+          {{ form.apellido_paterno }}
+          <datalist id="lista-apellidos-paternos">
+            {% for apellido in apellidos_paternos %}
+                <option value="{{ apellido }}"></option>
+            {% endfor %}
+          </datalist>
+          {% if form.apellido_paterno.errors %}
           <p class="text-red-600 text-sm mt-1">
             {{ form.apellido_paterno.errors }}
           </p>
@@ -144,13 +151,17 @@
         <!-- Apellido materno -->
         <div>
           <label
-            for="{{ form.apellido_materno.id_for_label }}"
-            class="block text-gray-700 font-semibold mb-2"
-          >
+            for="{{ form.apellido_materno.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
             Apellido materno
           </label>
+          {{ form.apellido_materno }}
+          <datalist id="lista-apellidos-maternos">
+            {% for apellido in apellidos_maternos %}
+            <option value="{{ apellido }}"></option>
+            {% endfor %}
+          </datalist>
 
-          {{ form.apellido_materno }} {% if form.apellido_materno.errors %}
+          {% if form.apellido_materno.errors %}
           <p class="text-red-600 text-sm mt-1">
             {{ form.apellido_materno.errors }}
           </p>

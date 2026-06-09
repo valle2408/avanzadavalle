@@ -73,18 +73,21 @@ class FormularioCompraCafe(forms.Form):
             'class': 'w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#233b6e]',
             'autocomplete': 'off',
             'placeholder': 'Nombre',
+            'list': 'lista-nombres-productores',
         })
 
         self.fields['apellido_paterno'].widget.attrs.update({
             'class': 'w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#233b6e]',
             'autocomplete': 'off',
             'placeholder': 'Apellido Paterno',
+            'list': 'lista-apellidos-paternos',
         })
 
         self.fields['apellido_materno'].widget.attrs.update({
             'class': 'w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#233b6e]',
             'autocomplete': 'off',
             'placeholder': 'Apellido Materno',
+            'list': 'lista-apellidos-maternos',
         })
 
         self.fields['fecha_compra'].widget.attrs.update({
