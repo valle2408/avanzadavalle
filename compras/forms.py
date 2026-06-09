@@ -13,7 +13,8 @@ class FormularioCompraCafe(forms.Form):
     # Comunidad seleccionada desde la tabla Comunidades.
     # Mostraremos solo comunidades activas.
     comunidad = forms.ModelChoiceField(
-        queryset=Comunidad.objects.filter(estado='Activo').order_by('nombre_comunidad'),
+        queryset=Comunidad.objects.filter(
+            estado='Activo').order_by('nombre_comunidad'),
         label='Comunidad',
         empty_label='Seleccione una comunidad'
     )
@@ -42,7 +43,11 @@ class FormularioCompraCafe(forms.Form):
     fecha_compra = forms.DateField(
         label='Fecha de compra',
         initial=timezone.localdate,
-        widget=forms.DateInput(attrs={'type': 'date'})
+        input_formats=['%Y-%m-%d'],
+        widget=forms.DateInput(
+            format='%Y-%m-%d',
+            attrs={'type': 'date'}
+        )
     )
 
     # Precio de compra por libra.
@@ -57,6 +62,8 @@ class FormularioCompraCafe(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        if not self.is_bound:
+            self.fields['fecha_compra'].initial = timezone.localdate()
         # Aplicamos estilos parecidos a Comunidades y Productores.
         self.fields['comunidad'].widget.attrs.update({
             'class': 'w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#233b6e]',
@@ -119,6 +126,7 @@ class FormularioCompraCafe(forms.Form):
         precio = self.cleaned_data['precio_compra']
 
         if precio <= 0:
-            raise forms.ValidationError('El precio de compra debe ser mayor a 0.')
+            raise forms.ValidationError(
+                'El precio de compra debe ser mayor a 0.')
 
         return precio

@@ -1,0 +1,563 @@
+{% extends 'principal/base.html' %} {% block title %}Nueva compra{% endblock %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+  <!-- Mensaje de error propio del módulo -->
+  {% if mensaje_error %}
+  <div id="mensaje-temporal" class="mb-4">
+    <div
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow"
+    >
+      {{ mensaje_error }}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Mensaje de compra registrada -->
+  {% if compra_registrada %}
+  <div id="mensaje-temporal-exito" class="mb-4">
+    <div
+      class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow"
+    >
+      Compra registrada correctamente.
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Encabezado -->
+  <div
+    class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6"
+  >
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">Nueva compra</h1>
+      <p class="text-gray-600 mt-1">Registro de compra de café al productor.</p>
+    </div>
+
+    <a
+      href="{% url 'dashboard' %}"
+      class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-center"
+    >
+      Volver al Dashboard
+    </a>
+  </div>
+
+  <!-- Formulario principal -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <form method="post" autocomplete="off" id="form-compra">
+      {% csrf_token %}
+
+      <!-- Sección comunidad y productor -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Comunidad -->
+        <div class="relative">
+          <label class="block text-gray-700 font-semibold mb-2">
+            Comunidad
+          </label>
+
+          <!-- Campo visible para escribir la comunidad -->
+          <input
+            type="text"
+            id="comunidad-autocomplete"
+            placeholder="Escriba la comunidad"
+            autocomplete="off"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#233b6e]"
+          />
+
+          <!-- Campo oculto real que Django recibirá -->
+          <input type="hidden" name="comunidad" id="id_comunidad" />
+
+          <!-- Lista personalizada de sugerencias -->
+          <div
+            id="lista-comunidades"
+            class="hidden absolute z-40 bg-white border border-gray-300 rounded-lg shadow-md mt-1 w-full max-h-48 overflow-y-auto"
+          >
+            {% for comunidad in form.comunidad.field.queryset %}
+            <div
+              class="opcion-comunidad px-4 py-2 hover:bg-gray-100 cursor-pointer"
+              data-id="{{ comunidad.id_comunidad }}"
+              data-nombre="{{ comunidad.nombre_comunidad }}"
+            >
+              {{ comunidad.nombre_comunidad }}
+            </div>
+            {% endfor %}
+          </div>
+
+          {% if form.comunidad.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.comunidad.errors }}</p>
+          {% endif %}
+
+          <p class="text-gray-500 text-sm mt-1">
+            Escriba y seleccione una comunidad existente.
+          </p>
+        </div>
+
+        <!-- Fecha -->
+        <div>
+          <label
+            for="{{ form.fecha_compra.id_for_label }}"
+            class="block text-gray-700 font-semibold mb-2"
+          >
+            Fecha
+          </label>
+
+          {{ form.fecha_compra }} {% if form.fecha_compra.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.fecha_compra.errors }}
+          </p>
+          {% endif %}
+
+          <p class="text-gray-500 text-sm mt-1">
+            Se autocompleta con la fecha actual.
+          </p>
+        </div>
+
+        <!-- Nombre -->
+        <div>
+          <label
+            for="{{ form.nombre.id_for_label }}"
+            class="block text-gray-700 font-semibold mb-2"
+          >
+            Nombre del productor
+          </label>
+
+          {{ form.nombre }} {% if form.nombre.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.nombre.errors }}</p>
+          {% endif %}
+        </div>
+
+        <!-- Apellido paterno -->
+        <div>
+          <label
+            for="{{ form.apellido_paterno.id_for_label }}"
+            class="block text-gray-700 font-semibold mb-2"
+          >
+            Apellido paterno
+          </label>
+
+          {{ form.apellido_paterno }} {% if form.apellido_paterno.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.apellido_paterno.errors }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Apellido materno -->
+        <div>
+          <label
+            for="{{ form.apellido_materno.id_for_label }}"
+            class="block text-gray-700 font-semibold mb-2"
+          >
+            Apellido materno
+          </label>
+
+          {{ form.apellido_materno }} {% if form.apellido_materno.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.apellido_materno.errors }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Precio compra -->
+        <div>
+          <label
+            for="{{ form.precio_compra.id_for_label }}"
+            class="block text-gray-700 font-semibold mb-2"
+          >
+            Precio de compra
+          </label>
+
+          <div class="relative">
+            {{ form.precio_compra }}
+
+            <span
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold"
+            >
+              Bs
+            </span>
+          </div>
+
+          {% if form.precio_compra.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.precio_compra.errors }}
+          </p>
+          {% endif %}
+
+          <p class="text-gray-500 text-sm mt-1">Precio pagado por libra.</p>
+        </div>
+      </div>
+
+      <!-- Pesajes -->
+      <div class="border-t pt-6 mb-6">
+        <div
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4"
+        >
+          <div>
+            <h2 class="text-xl font-bold text-gray-800">Cantidad en libras</h2>
+
+            <p class="text-gray-600 text-sm">
+              Agregue uno o varios pesajes según las bolsas entregadas.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            id="btn-agregar-pesaje"
+            class="w-full md:w-auto bg-[#233b6e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#1a2c53] transition-colors duration-300"
+          >
+            + Agregar pesaje
+          </button>
+        </div>
+
+        <div id="contenedor-pesajes" class="space-y-3">
+          <!-- Pesaje inicial -->
+          <div
+            class="pesaje-item flex flex-col sm:flex-row gap-3 items-start sm:items-center"
+          >
+            <label class="w-full sm:w-28 text-gray-700 font-semibold">
+              Pesaje 1
+            </label>
+
+            <div class="relative w-full sm:w-64">
+              <input
+                type="number"
+                name="pesajes[]"
+                min="0.01"
+                step="0.01"
+                inputmode="decimal"
+                placeholder="0.00"
+                class="input-pesaje w-full border border-gray-300 rounded-lg px-4 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-[#233b6e]"
+              />
+
+              <span
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold"
+              >
+                lb
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Totales -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 border-t pt-6 mb-6">
+        <!-- Total libras -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            Total de libras acopiadas
+          </label>
+
+          <div class="relative">
+            <input
+              type="text"
+              id="total-libras"
+              value="0.00"
+              readonly
+              class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 pr-16 text-gray-800 font-semibold"
+            />
+
+            <span
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold"
+            >
+              lb
+            </span>
+          </div>
+        </div>
+
+        <!-- Total pagar -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            Total por pagar
+          </label>
+
+          <div class="relative">
+            <input
+              type="text"
+              id="total-pagar"
+              value="0.00"
+              readonly
+              class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 pr-16 text-gray-800 font-semibold"
+            />
+
+            <span
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold"
+            >
+              Bs
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button
+          type="submit"
+          class="w-full sm:w-auto bg-[#233b6e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#1a2c53] transition-colors duration-300"
+        >
+          Finalizar compra
+        </button>
+
+        <a
+          href="{% url 'compras:nueva_compra' %}"
+          class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow text-center"
+        >
+          Limpiar
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal de credenciales para productor nuevo -->
+{% if credenciales_nuevo_productor %}
+<div
+  id="modal-credenciales"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+>
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6 relative">
+    <!-- Botón cerrar -->
+    <a
+      href="{% url 'compras:nueva_compra' %}"
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold"
+    >
+      ×
+    </a>
+
+    <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">
+      Nuevo usuario creado correctamente
+    </h2>
+
+    <p class="text-gray-600 text-center mb-6">
+      Entregue estas credenciales al productor.
+    </p>
+
+    <div class="bg-gray-50 rounded-lg p-4 space-y-3 mb-6">
+      <p>
+        <span class="font-semibold text-gray-700">Productor:</span>
+        {{ credenciales_nuevo_productor.nombre_completo }}
+      </p>
+
+      <p>
+        <span class="font-semibold text-gray-700">Comunidad:</span>
+        {{ credenciales_nuevo_productor.comunidad }}
+      </p>
+
+      <hr />
+
+      <p>
+        <span class="font-semibold text-gray-700">Usuario:</span>
+        <span class="font-bold text-[#233b6e]">
+          {{ credenciales_nuevo_productor.usuario }}
+        </span>
+      </p>
+
+      <p>
+        <span class="font-semibold text-gray-700">Contraseña temporal:</span>
+        <span class="font-bold text-[#233b6e]">
+          {{ credenciales_nuevo_productor.password }}
+        </span>
+      </p>
+    </div>
+
+    <a
+      href="{% url 'compras:nueva_compra' %}"
+      class="block w-full text-center bg-[#233b6e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#1a2c53] transition-colors duration-300"
+    >
+      Cerrar y registrar nueva compra
+    </a>
+  </div>
+</div>
+{% endif %}
+<script>
+  // Oculta mensajes temporales después de 2.5 segundos.
+  setTimeout(function () {
+    const mensajeError = document.getElementById("mensaje-temporal");
+    const mensajeExito = document.getElementById("mensaje-temporal-exito");
+
+    if (mensajeError) {
+      mensajeError.style.display = "none";
+    }
+
+    if (mensajeExito) {
+      mensajeExito.style.display = "none";
+    }
+  }, 2500);
+
+  // Autocompletado personalizado de comunidad.
+  const inputComunidad = document.getElementById("comunidad-autocomplete");
+  const inputComunidadId = document.getElementById("id_comunidad");
+  const listaComunidades = document.getElementById("lista-comunidades");
+  const opcionesComunidad = document.querySelectorAll(".opcion-comunidad");
+
+  if (inputComunidad && inputComunidadId && listaComunidades) {
+    inputComunidad.addEventListener("input", function () {
+      const texto = this.value.trim().toLowerCase();
+
+      inputComunidadId.value = "";
+
+      let hayCoincidencias = false;
+
+      opcionesComunidad.forEach(function (opcion) {
+        const nombre = opcion.dataset.nombre.toLowerCase();
+
+        if (texto !== "" && nombre.includes(texto)) {
+          opcion.classList.remove("hidden");
+          hayCoincidencias = true;
+        } else {
+          opcion.classList.add("hidden");
+        }
+      });
+
+      if (hayCoincidencias) {
+        listaComunidades.classList.remove("hidden");
+      } else {
+        listaComunidades.classList.add("hidden");
+      }
+    });
+
+    opcionesComunidad.forEach(function (opcion) {
+      opcion.addEventListener("click", function () {
+        inputComunidad.value = this.dataset.nombre;
+        inputComunidadId.value = this.dataset.id;
+        listaComunidades.classList.add("hidden");
+      });
+    });
+
+    document.addEventListener("click", function (event) {
+      if (
+        !inputComunidad.contains(event.target) &&
+        !listaComunidades.contains(event.target)
+      ) {
+        listaComunidades.classList.add("hidden");
+      }
+    });
+  }
+
+  // Evita letras y caracteres no deseados en campos numéricos.
+  function bloquearLetrasEnNumero(event) {
+    const teclasBloqueadas = ["e", "E", "+", "-"];
+
+    if (teclasBloqueadas.includes(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  // Calcula total de libras y total por pagar.
+  // Esto es solo cálculo visual; el backend recalcula con Decimal.
+  function calcularTotales() {
+    const inputsPesaje = document.querySelectorAll(".input-pesaje");
+    const inputPrecio = document.getElementById("id_precio_compra");
+
+    let totalLibras = 0;
+
+    inputsPesaje.forEach(function (input) {
+      const valor = parseFloat(input.value);
+
+      if (!isNaN(valor) && valor > 0) {
+        totalLibras += valor;
+      }
+    });
+
+    const precio = parseFloat(inputPrecio.value);
+    let totalPagar = 0;
+
+    if (!isNaN(precio) && precio > 0) {
+      totalPagar = totalLibras * precio;
+    }
+
+    document.getElementById("total-libras").value = totalLibras.toFixed(2);
+    document.getElementById("total-pagar").value = totalPagar.toFixed(2);
+  }
+
+  // Reorganiza Pesaje 1, Pesaje 2, etc.
+  function actualizarNumeracionPesajes() {
+    const items = document.querySelectorAll(".pesaje-item");
+
+    items.forEach(function (item, index) {
+      const label = item.querySelector("label");
+      label.textContent = "Pesaje " + (index + 1);
+    });
+  }
+
+  // Agrega un nuevo campo de pesaje.
+  const btnAgregarPesaje = document.getElementById("btn-agregar-pesaje");
+  const contenedorPesajes = document.getElementById("contenedor-pesajes");
+
+  if (btnAgregarPesaje && contenedorPesajes) {
+    btnAgregarPesaje.addEventListener("click", function () {
+      const nuevoPesaje = document.createElement("div");
+
+      nuevoPesaje.className =
+        "pesaje-item flex flex-col sm:flex-row gap-3 items-start sm:items-center";
+
+      nuevoPesaje.innerHTML = `
+                <label class="w-full sm:w-28 text-gray-700 font-semibold">
+                    Pesaje
+                </label>
+
+                <div class="relative w-full sm:w-64">
+                    <input type="number"
+                           name="pesajes[]"
+                           min="0.01"
+                           step="0.01"
+                           inputmode="decimal"
+                           placeholder="0.00"
+                           class="input-pesaje w-full border border-gray-300 rounded-lg px-4 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-[#233b6e]">
+
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
+                        lb
+                    </span>
+                </div>
+
+                <button type="button"
+                        class="btn-eliminar-pesaje bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded-lg shadow">
+                    Quitar
+                </button>
+            `;
+
+      contenedorPesajes.appendChild(nuevoPesaje);
+
+      const inputNuevo = nuevoPesaje.querySelector(".input-pesaje");
+      inputNuevo.addEventListener("keydown", bloquearLetrasEnNumero);
+      inputNuevo.addEventListener("input", calcularTotales);
+
+      const btnEliminar = nuevoPesaje.querySelector(".btn-eliminar-pesaje");
+      btnEliminar.addEventListener("click", function () {
+        nuevoPesaje.remove();
+        actualizarNumeracionPesajes();
+        calcularTotales();
+      });
+
+      actualizarNumeracionPesajes();
+    });
+  }
+
+  // Eventos en inputs iniciales de pesaje.
+  document.querySelectorAll(".input-pesaje").forEach(function (input) {
+    input.addEventListener("keydown", bloquearLetrasEnNumero);
+    input.addEventListener("input", calcularTotales);
+  });
+
+  // Eventos en input de precio.
+  const inputPrecio = document.getElementById("id_precio_compra");
+
+  if (inputPrecio) {
+    inputPrecio.addEventListener("keydown", bloquearLetrasEnNumero);
+    inputPrecio.addEventListener("input", calcularTotales);
+  }
+
+  // Validación antes de enviar:
+  // evita enviar si el usuario escribió comunidad pero no seleccionó una opción real.
+  const formCompra = document.getElementById("form-compra");
+
+  if (formCompra) {
+    formCompra.addEventListener("submit", function (event) {
+      if (!inputComunidadId.value) {
+        event.preventDefault();
+        alert("Debe seleccionar una comunidad existente de la lista.");
+        inputComunidad.focus();
+      }
+    });
+  }
+</script>
+
+{% endblock %}
