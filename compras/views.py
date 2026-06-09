@@ -14,6 +14,12 @@ from .models import CompraCafe, DetallePesajeCompra
 from productores.models import Productor
 from usuarios.models import UsuarioRol, Rol
 
+#importaciones para el pdf o recibo:
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import portrait
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import mm
+
 
 # Función para obtener el permiso del usuario en Registrar compra de café.
 # 0 = Sin acceso
@@ -286,3 +292,135 @@ def nueva_compra(request):
     }
 
     return render(request, 'compras/nueva_compra.html', contexto)
+
+# Vista para generar el recibo PDF pequeño tipo ticket.
+@login_required
+def recibo_compra_pdf(request, pk):
+
+    permiso = obtener_permiso_registrar_compras(request.user)
+
+    # Por ahora permitimos ver el recibo a usuarios con acceso al módulo.
+    # Más adelante, cuando hagamos el historial del productor,
+    # afinaremos para que el productor solo vea sus propios recibos.
+    if permiso == 0:
+        return redirect('dashboard')
+
+    compra = CompraCafe.objects.get(pk=pk)
+
+    # Tamaño pequeño tipo ticket.
+    # 80 mm de ancho x 140 mm de alto.
+    ancho = 80 * mm
+    alto = 140 * mm
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="recibo_compra_{compra.id_compra}.pdf"'
+
+    pdf = canvas.Canvas(response, pagesize=(ancho, alto))
+
+    # Márgenes
+    margen_x = 8 * mm
+    y = alto - 10 * mm
+
+    # Título
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawCentredString(ancho / 2, y, "RECIBO")
+    y -= 6 * mm
+
+    pdf.setFont("Helvetica", 8)
+    pdf.drawCentredString(ancho / 2, y, "Empresa de Cafe La Avanzada")
+    y -= 5 * mm
+
+    # Línea separadora
+    pdf.line(margen_x, y, ancho - margen_x, y)
+    y -= 6 * mm
+
+    # Datos del recibo
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Nro. recibo:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(35 * mm, y, str(compra.id_compra))
+    y -= 5 * mm
+
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Fecha:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(35 * mm, y, compra.fecha_compra.strftime("%d/%m/%Y"))
+    y -= 5 * mm
+
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Codigo:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(35 * mm, y, compra.codigo_productor_recibo)
+    y -= 5 * mm
+
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Productor:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(35 * mm, y, compra.productor_nombre_recibo[:28])
+    y -= 5 * mm
+
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Comunidad:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawString(35 * mm, y, compra.comunidad_nombre_recibo[:28])
+    y -= 6 * mm
+
+    pdf.line(margen_x, y, ancho - margen_x, y)
+    y -= 6 * mm
+
+    # Detalle económico
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Cantidad:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawRightString(ancho - margen_x, y, f"{compra.total_libras:.2f} lb")
+    y -= 5 * mm
+
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Precio por lb:")
+    pdf.setFont("Helvetica", 8)
+    pdf.drawRightString(ancho - margen_x, y, f"{compra.precio_compra:.2f} Bs")
+    y -= 5 * mm
+
+    pdf.setFont("Helvetica-Bold", 9)
+    pdf.drawString(margen_x, y, "Monto pagado:")
+    pdf.setFont("Helvetica-Bold", 9)
+    pdf.drawRightString(ancho - margen_x, y, f"{compra.total_pagado:.2f} Bs")
+    y -= 6 * mm
+
+    pdf.line(margen_x, y, ancho - margen_x, y)
+    y -= 7 * mm
+
+    # Pesajes
+    pdf.setFont("Helvetica-Bold", 8)
+    pdf.drawString(margen_x, y, "Pesajes:")
+    y -= 5 * mm
+
+    pdf.setFont("Helvetica", 8)
+
+    for index, pesaje in enumerate(compra.pesajes.all(), start=1):
+        pdf.drawString(margen_x, y, f"{index}.")
+        pdf.drawRightString(ancho - margen_x, y, f"{pesaje.cantidad_libras:.2f} lb")
+        y -= 4 * mm
+
+        # Evita que el texto se salga del ticket si hay muchos pesajes.
+        if y < 18 * mm:
+            break
+
+    y -= 3 * mm
+    pdf.line(margen_x, y, ancho - margen_x, y)
+    y -= 6 * mm
+
+    # Usuario que registró
+    pdf.setFont("Helvetica", 7)
+    if compra.creado_por:
+        pdf.drawCentredString(ancho / 2, y, f"Registrado por: {compra.creado_por.username}")
+        y -= 4 * mm
+
+    pdf.drawCentredString(ancho / 2, y, "Gracias por su entrega de cafe")
+    y -= 4 * mm
+    pdf.drawCentredString(ancho / 2, y, "La Avanzada")
+
+    pdf.showPage()
+    pdf.save()
+
+    return response

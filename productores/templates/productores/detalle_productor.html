@@ -100,12 +100,12 @@
 
                 <p>
                     <span class="font-semibold text-gray-700">Total de libras entregadas:</span>
-                    {{ total_libras }} lb
+                    {{ total_libras|floatformat:2 }} lb
                 </p>
 
                 <p>
                     <span class="font-semibold text-gray-700">Total pagado al Productor:</span>
-                    {{ total_pagado }} Bs
+                    {{ total_pagado|floatformat:2 }} Bs
                 </p>
 
                 <p>
@@ -190,19 +190,20 @@
                         </td>
 
                         <td class="px-4 py-3">
-                            {{ compra.total_libras }} lb
+                            {{ compra.total_libras|floatformat:2 }} lb
                         </td>
 
                         <td class="px-4 py-3">
-                            {{ compra.total_pagado }} Bs
+                            {{ compra.total_pagado|floatformat:2 }} Bs
                         </td>
 
                         <td class="px-4 py-3">
-                            <button type="button"
-                                    class="bg-gray-400 text-white px-3 py-1 rounded shadow cursor-not-allowed"
-                                    disable>
-                                Pendiente
-                            </button>
+                            <td class="px-4 py-3">
+                                <a href="{% url 'compras:recibo_compra_pdf' compra.pk %}"
+                                target="_blank"
+                                class="bg-[#233b6e] hover:bg-[#1a2c53] text-white px-3 py-1 rounded shadow transition-colors duration-300">
+                                Ver
+                                </a>
                         </td>
                     </tr>
                  {% empty %}
