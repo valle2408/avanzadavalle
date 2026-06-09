@@ -71,8 +71,8 @@ def obtener_iniciales_comunidad(nombre_comunidad):
 # Ejemplo: JU001AV
 def generar_codigo_productor(nombre, comunidad):
 
-    inicial_nombre = nombre[:2].upper()
-    inicial_comunidad = obtener_iniciales_comunidad(comunidad.nombre_comunidad)
+    inicial_nombre = nombre[:2].lower()
+    inicial_comunidad = obtener_iniciales_comunidad(comunidad.nombre_comunidad).lower()
 
     base_codigo = f"{inicial_nombre}"
 
@@ -96,11 +96,11 @@ def generar_codigo_productor(nombre, comunidad):
 # Ejemplo: AV4827K
 def generar_password_temporal():
 
-    letras = string.ascii_uppercase
+    letras = string.ascii_lowercase
     numeros = string.digits
 
     return (
-        "AV"
+        "av"
         + "".join(random.choices(numeros, k=4))
         + random.choice(letras)
     )
