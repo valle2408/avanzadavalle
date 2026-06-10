@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'compras',
     'historial',
     'ventas',
+    'roles',
 
 ]
 
