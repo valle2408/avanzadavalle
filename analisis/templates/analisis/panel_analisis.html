@@ -1,6 +1,8 @@
 {% extends 'principal/base.html' %}
 
 {% block content %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
 <div class="p-6">
 
     <div class="mb-6 flex justify-between items-center">
@@ -13,7 +15,7 @@
             </p>
         </div>
 
-        <a href="{% url 'principal:dashboard' %}"
+        <a href="{% url 'dashboard' %}"
            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
             Volver
         </a>
@@ -27,29 +29,41 @@
                 Análisis del acopio
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="bg-gray-50 rounded-xl border p-4 min-h-[360px]">
                     <h3 class="text-sm font-semibold text-gray-600 mb-2">
-                        Libras acopiadas por mes
+                        Libras acopiadas por mes   
                     </h3>
+                    <div class="w-full overflow-x-auto">
+                        <div id="grafico-libras-mes" class="min-w-[520px] h-[300px]"></div>
+                    </div>
                 </div>
 
-                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+                <div class="bg-gray-50 rounded-xl border p-4 min-h-[360px]">
                     <h3 class="text-sm font-semibold text-gray-600 mb-2">
-                        Libras por comunidad
+                        Libras por Comunidad
                     </h3>
+                    <div class="w-full overflow-x-auto">
+                        <div id="grafico-libras-comunidad" class="min-w-[520px] h-[300px]"></div>
+                    </div>
                 </div>
 
-                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+                <div class="bg-gray-50 rounded-xl border p-4 min-h-[360px]">
                     <h3 class="text-sm font-semibold text-gray-600 mb-2">
-                        Productores que más entregaron café
+                        Productores que mas entregaron cafe
                     </h3>
+                    <div class="w-full overflow-x-auto">
+                        <div id="grafico-productores" class="min-w-[620px] h-[300px]"></div>
+                    </div>
                 </div>
 
-                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+                <div class="bg-gray-50 rounded-xl border p-4 min-h-[360px]">
                     <h3 class="text-sm font-semibold text-gray-600 mb-2">
                         Total pagado por mes
                     </h3>
+                    <div class="w-full overflow-x-auto">
+                        <div id="grafico-total-pagado" class="min-w-[520px] h-[300px]"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -60,7 +74,7 @@
                 Predicción
             </h2>
 
-            <div class="bg-gray-50 rounded-xl border p-4 h-[560px] flex flex-col justify-between">
+            <div class="bg-gray-50 rounded-xl border p-4 min-h-[560px] flex flex-col justify-between">
                 <div>
                     <h3 class="text-sm font-semibold text-gray-600 mb-2">
                         Predicción mensual de libras acopiadas
@@ -81,4 +95,177 @@
     </div>
 
 </div>
+
+<script>
+    const configGrafico = {
+        responsive: true,
+        displayModeBar: false
+    };
+
+    const paleta = [
+        '#60A5FA',
+        '#34D399',
+        '#FBBF24',
+        '#F87171',
+        '#A78BFA',
+        '#22D3EE',
+        '#F472B6',
+        '#A3E635',
+        '#FB923C',
+        '#2DD4BF'
+    ];
+
+    const layoutBase = {
+        autosize: true,
+        margin: { l: 190, r: 30, t: 15, b: 70 },
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: {
+            family: 'Arial',
+            size: 11,
+            color: '#374151'
+        },
+        hoverlabel: {
+            bgcolor: '#111827',
+            font: {
+                color: '#ffffff',
+                size: 12
+            }
+        }
+    };
+
+    // 1. Libras acopiadas por mes
+    Plotly.newPlot('grafico-libras-mes', [{
+        x: {{ meses_libras|safe }},
+        y: {{ valores_libras_mes|safe }},
+        type: 'bar',
+        marker: {
+            color: paleta,
+            line: {
+                color: 'rgba(255,255,255,0.9)',
+                width: 1.5
+            }
+        },
+        hovertemplate: '<b>%{x}</b><br>Libras: %{y:.2f}<extra></extra>'
+    }], {
+        ...layoutBase,
+        yaxis: {
+            title: {
+                text: 'Libras',
+                standoff: 18
+            },
+            automargin: true,
+            gridcolor: 'rgba(156,163,175,0.25)'
+        },
+        xaxis: {
+            tickangle: -35,
+            automargin: true
+        }
+    }, configGrafico);
+
+    // 2. Libras acopiadas por comunidad
+    Plotly.newPlot('grafico-libras-comunidad', [{
+        x: {{ valores_libras_comunidad|safe }},
+        y: {{ comunidades|safe }},
+        type: 'bar',
+        orientation: 'h',
+        marker: {
+            color: paleta,
+            line: {
+                color: 'rgba(255,255,255,0.9)',
+                width: 1.5
+            }
+        },
+        hovertemplate: '<b>%{y}</b><br>Libras: %{x:.2f}<extra></extra>'
+    }], {
+        ...layoutBase,
+        margin: { l: 135, r: 25, t: 15, b: 70 },
+        xaxis: {
+            title: {
+                text: 'Libras',
+                standoff: 18
+            },
+            automargin: true,
+            gridcolor: 'rgba(156,163,175,0.25)'
+        },
+        yaxis: {
+            automargin: true,
+            tickfont: {
+                size: 10
+            }
+        }
+    }, configGrafico);
+
+    // 3. Productores que más entregaron café
+    Plotly.newPlot('grafico-productores', [{
+        x: {{ valores_productores|safe }},
+        y: {{ productores|safe }},
+        type: 'bar',
+        orientation: 'h',
+        marker: {
+            color: paleta,
+            line: {
+                color: 'rgba(255,255,255,0.9)',
+                width: 1.5
+            }
+        },
+        hovertemplate: '<b>%{y}</b><br>Libras: %{x:.2f}<extra></extra>'
+    }], {
+        ...layoutBase,
+        margin: { l: 165, r: 25, t: 15, b: 70 },
+        xaxis: {
+            title: {
+                text: 'Libras',
+                standoff: 18
+            },
+            automargin: true,
+            gridcolor: 'rgba(156,163,175,0.25)'
+        },
+        yaxis: {
+            automargin: true,
+            tickfont: {
+                size: 10
+            }
+        }
+    }, configGrafico);
+
+    // 4. Total pagado por mes
+    Plotly.newPlot('grafico-total-pagado', [{
+        x: {{ meses_pagado|safe }},
+        y: {{ valores_pagado_mes|safe }},
+        type: 'bar',
+        marker: {
+            color: paleta,
+            line: {
+                color: 'rgba(255,255,255,0.9)',
+                width: 1.5
+            }
+        },
+        text: {{ valores_pagado_mes|safe }}.map(valor => 'Bs ' + valor.toFixed(2)),
+        textposition: 'auto',
+        hovertemplate: '<b>%{x}</b><br>Total pagado: Bs %{y:.2f}<extra></extra>'
+    }], {
+        ...layoutBase,
+        margin: { l: 90, r: 25, t: 15, b: 70 },
+        yaxis: {
+            title: {
+                text: 'Bolivianos',
+                standoff: 22
+            },
+            automargin: true,
+            gridcolor: 'rgba(156,163,175,0.25)'
+        },
+        xaxis: {
+            tickangle: -35,
+            automargin: true
+        }
+    }, configGrafico);
+
+    window.addEventListener('resize', function () {
+        Plotly.Plots.resize('grafico-libras-mes');
+        Plotly.Plots.resize('grafico-libras-comunidad');
+        Plotly.Plots.resize('grafico-productores');
+        Plotly.Plots.resize('grafico-total-pagado');
+    });
+</script>
 {% endblock %}
