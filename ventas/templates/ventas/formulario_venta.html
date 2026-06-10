@@ -1,0 +1,177 @@
+{% extends 'principal/base.html' %}
+
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+  <!-- Encabezado -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">{{ titulo }}</h1>
+      <p class="text-gray-600 mt-1">
+        Registro de venta de café refinado de la empresa La Avanzada.
+      </p>
+    </div>
+
+    <a
+      href="{% url 'ventas:lista_ventas' %}"
+      class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-center"
+    >
+      Volver a la Lista de Ventas
+    </a>
+
+  </div>
+
+  <!-- Formulario -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+        <!-- Número de ingreso -->
+        <div>
+          <label for="{{ form.numero_ingreso.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+            Número de ingreso
+          </label>
+
+          {{ form.numero_ingreso }}
+
+          {% if form.numero_ingreso.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.numero_ingreso.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Fecha -->
+        <div>
+          <label for="{{ form.fecha_venta.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+            Fecha
+          </label>
+
+          {{ form.fecha_venta }}
+
+          {% if es_edicion %}
+          <p class="text-gray-500 text-sm mt-1">
+            La fecha no se modifica después del registro.
+          </p>
+          {% endif %}
+
+          {% if form.fecha_venta.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.fecha_venta.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Empresa compradora -->
+        <div class="md:col-span-2">
+          <label for="{{ form.empresa_compradora.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+            Empresa compradora
+          </label>
+
+          {{ form.empresa_compradora }}
+
+          {% if form.empresa_compradora.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.empresa_compradora.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Tipo de café -->
+        <div>
+          <label for="{{ form.tipo_cafe.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+            Tipo de café
+          </label>
+
+          {{ form.tipo_cafe }}
+
+          {% if form.tipo_cafe.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.tipo_cafe.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Cantidad de sacos -->
+        <div>
+          <label for="{{ form.cantidad_sacos.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+            Cantidad de sacos
+          </label>
+
+          {{ form.cantidad_sacos }}
+
+          {% if form.cantidad_sacos.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.cantidad_sacos.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Peso total -->
+        <div>
+          <label for="{{ form.peso_total_kg.id_for_label }}" class="block text-gray-700 font-semibold mb-2">
+            Peso total
+          </label>
+
+          <div class="relative">
+            {{ form.peso_total_kg }}
+
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
+              kg
+            </span>
+          </div>
+
+          {% if form.peso_total_kg.errors %}
+          <p class="text-red-600 text-sm mt-1">
+            {{ form.peso_total_kg.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Datos por sistema -->
+        <div>
+          <label class="block text-gray-700 font-semibold mb-2">
+            Datos por sistema
+          </label>
+
+          <div class="bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-700">
+            <p><span class="font-semibold">Procedencia:</span> Irupana</p>
+            <p><span class="font-semibold">Proveedor:</span> La Avanzada</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Botones -->
+      <div class="flex flex-col sm:flex-row gap-3">
+
+        <button
+          type="submit"
+          class="w-full sm:w-auto bg-[#233b6e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#1a2c53] transition-colors duration-300"
+        >
+          {{ boton }}
+        </button>
+
+        <a
+          href="{% url 'ventas:lista_ventas' %}"
+          class="w-full sm:w-auto bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow text-center"
+        >
+          Cancelar
+        </a>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

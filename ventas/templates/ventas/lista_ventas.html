@@ -1,0 +1,244 @@
+{% extends 'principal/base.html' %}
+
+{% block title %}Registro de Ventas{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto">
+
+  <!-- Mensaje de venta registrada -->
+  {% if request.GET.creado %}
+  <div id="mensaje-temporal-exito" class="mb-4">
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow">
+      Venta registrada correctamente.
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Mensaje de venta editada -->
+  {% if request.GET.editado %}
+  <div id="mensaje-temporal-editado" class="mb-4">
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow">
+      Venta editada correctamente.
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Encabezado principal -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800">Registro de Ventas</h1>
+      <p class="text-gray-600 mt-1">
+        Consulta de ventas de café registradas en el sistema.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3">
+      {% if permiso >= 2 %}
+      <a
+        href="{% url 'ventas:nueva_venta' %}"
+        class="bg-[#233b6e] hover:bg-[#1a2c53] text-white px-4 py-2 rounded-lg shadow text-center"
+      >
+        Registrar Nueva Venta
+      </a>
+      {% endif %}
+
+      <a
+        href="{% url 'dashboard' %}"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow text-center"
+      >
+        Volver al Dashboard
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Buscador -->
+  <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+
+    <form method="get" class="flex flex-col md:flex-row gap-3">
+
+      <input
+        type="text"
+        name="buscar"
+        value="{{ buscar }}"
+        placeholder="Buscar por empresa compradora"
+        autocomplete="off"
+        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#233b6e]"
+      />
+
+      <button
+        type="submit"
+        class="w-full md:w-auto bg-[#233b6e] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#1a2c53] transition-colors duration-300"
+      >
+        Buscar
+      </button>
+
+      <a
+        href="{% url 'ventas:lista_ventas' %}"
+        class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg shadow text-center"
+      >
+        Limpiar
+      </a>
+
+    </form>
+
+  </div>
+
+  <!-- Tabla de ventas -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+
+    <div class="overflow-x-auto">
+
+      <table class="min-w-full border-collapse">
+
+        <thead class="bg-gray-50 text-gray-600 uppercase text-sm">
+          <tr>
+            <th class="px-4 py-4 text-left font-semibold">N°</th>
+            <th class="px-4 py-4 text-left font-semibold">N° ingreso</th>
+            <th class="px-4 py-4 text-left font-semibold">Fecha</th>
+            <th class="px-4 py-4 text-left font-semibold">Empresa compradora</th>
+            <th class="px-4 py-4 text-left font-semibold">Tipo de café</th>
+            <th class="px-4 py-4 text-left font-semibold">Cantidad de sacos</th>
+            <th class="px-4 py-4 text-left font-semibold">Peso total</th>
+            <th class="px-4 py-4 text-left font-semibold">Comprobante</th>
+            {% if permiso >= 2 %}
+            <th class="px-4 py-4 text-left font-semibold">Acción</th>
+            {% endif %}
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {% for venta in page_obj %}
+
+          <tr class="border-b hover:bg-gray-50">
+
+            <td class="px-4 py-3">
+              {{ page_obj.start_index|add:forloop.counter0 }}
+            </td>
+
+            <td class="px-4 py-3 font-semibold text-gray-800">
+              {{ venta.numero_ingreso }}
+            </td>
+
+            <td class="px-4 py-3">
+              {{ venta.fecha_venta|date:"d/m/Y" }}
+            </td>
+
+            <td class="px-4 py-3">
+              {{ venta.empresa_compradora }}
+            </td>
+
+            <td class="px-4 py-3">
+              {{ venta.tipo_cafe }}
+            </td>
+
+            <td class="px-4 py-3">
+              {{ venta.cantidad_sacos }}
+            </td>
+
+            <td class="px-4 py-3">
+              {{ venta.peso_total_kg|floatformat:2 }} kg
+            </td>
+
+            <td class="px-4 py-3">
+              <a
+                href="{% url 'ventas:comprobante_venta_pdf' venta.pk %}"
+                target="_blank"
+                class="bg-[#233b6e] hover:bg-[#1a2c53] text-white px-3 py-1 rounded shadow transition-colors duration-300"
+              >
+                Ver
+              </a>
+            </td>
+
+            {% if permiso >= 2 %}
+            <td class="px-4 py-3">
+              <a
+                href="{% url 'ventas:editar_venta' venta.pk %}"
+                class="bg-[#233b6e] hover:bg-[#1a2c53] text-white px-3 py-1 rounded shadow transition-colors duration-300"
+              >
+                Editar
+              </a>
+            </td>
+            {% endif %}
+
+          </tr>
+
+          {% empty %}
+
+          <tr>
+            {% if permiso >= 2 %}
+            <td colspan="9" class="px-4 py-6 text-center text-gray-500">
+              No existen ventas registradas todavía.
+            </td>
+            {% else %}
+            <td colspan="8" class="px-4 py-6 text-center text-gray-500">
+              No existen ventas registradas todavía.
+            </td>
+            {% endif %}
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+  <!-- Paginación -->
+  {% if page_obj.has_other_pages %}
+  <div class="flex justify-center mt-6">
+
+    <div class="flex gap-2">
+
+      {% if page_obj.has_previous %}
+      <a
+        href="?page={{ page_obj.previous_page_number }}{% if buscar %}&buscar={{ buscar }}{% endif %}"
+        class="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+      >
+        Anterior
+      </a>
+      {% endif %}
+
+      <span class="px-3 py-2 bg-[#233b6e] text-white rounded">
+        Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+      <a
+        href="?page={{ page_obj.next_page_number }}{% if buscar %}&buscar={{ buscar }}{% endif %}"
+        class="px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded"
+      >
+        Siguiente
+      </a>
+      {% endif %}
+
+    </div>
+
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  // Oculta mensajes temporales después de 2.5 segundos.
+  setTimeout(function () {
+    const mensajeExito = document.getElementById("mensaje-temporal-exito");
+    const mensajeEditado = document.getElementById("mensaje-temporal-editado");
+
+    if (mensajeExito) {
+      mensajeExito.style.display = "none";
+    }
+
+    if (mensajeEditado) {
+      mensajeEditado.style.display = "none";
+    }
+  }, 2500);
+</script>
+
+{% endblock %}
