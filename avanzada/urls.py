@@ -28,4 +28,5 @@ urlpatterns = [
     path('compras/', include('compras.urls')),# para las compras
     path('historial-compras/', include('historial.urls')), # para el historial
     path('ventas/', include('ventas.urls')), # para el registro de ventas
+    path('roles/', include('roles.urls')), # aplicacion para el modulo de rolesy usuarios
 ]
