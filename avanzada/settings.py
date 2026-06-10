@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'productores',
     'compras',
     'historial',
+    'ventas',
 
 ]
 
