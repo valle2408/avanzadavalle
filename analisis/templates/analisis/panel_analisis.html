@@ -1,0 +1,84 @@
+{% extends 'principal/base.html' %}
+
+{% block content %}
+<div class="p-6">
+
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">
+                Análisis y Predicciones
+            </h1>
+            <p class="text-gray-500 mt-1">
+                Visualización del acopio de café y predicción mensual.
+            </p>
+        </div>
+
+        <a href="{% url 'principal:dashboard' %}"
+           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+            Volver
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- PARTE IZQUIERDA: ANÁLISIS -->
+        <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-5">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">
+                Análisis del acopio
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+                    <h3 class="text-sm font-semibold text-gray-600 mb-2">
+                        Libras acopiadas por mes
+                    </h3>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+                    <h3 class="text-sm font-semibold text-gray-600 mb-2">
+                        Libras por comunidad
+                    </h3>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+                    <h3 class="text-sm font-semibold text-gray-600 mb-2">
+                        Productores que más entregaron café
+                    </h3>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl border p-4 h-64">
+                    <h3 class="text-sm font-semibold text-gray-600 mb-2">
+                        Total pagado por mes
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- PARTE DERECHA: PREDICCIÓN -->
+        <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-5">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">
+                Predicción
+            </h2>
+
+            <div class="bg-gray-50 rounded-xl border p-4 h-[560px] flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-600 mb-2">
+                        Predicción mensual de libras acopiadas
+                    </h3>
+
+                    <p class="text-gray-500 text-sm">
+                        En esta sección se integrará el modelo predictivo para estimar
+                        las libras acopiadas por mes hasta diciembre de 2026.
+                    </p>
+                </div>
+
+                <button class="bg-[#233b6e] hover:bg-[#1a2c53] text-white px-4 py-2 rounded-lg">
+                    Predecir
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
