@@ -27,4 +27,5 @@ urlpatterns = [
     path('productores/', include('productores.urls')), # agregamos las acciones de productres
     path('compras/', include('compras.urls')),# para las compras
     path('historial-compras/', include('historial.urls')), # para el historial
+    path('ventas/', include('ventas.urls')), # para el registro de ventas
 ]
