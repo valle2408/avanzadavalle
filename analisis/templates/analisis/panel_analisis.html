@@ -1,3 +1,4 @@
+
 {% extends 'principal/base.html' %}
 
 {% block content %}
@@ -8,7 +9,7 @@
     <div class="mb-6 flex justify-between items-center">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">
-                Análisis y Predicciones
+                Analisis y Predicciones
             </h1>
             <p class="text-gray-500 mt-1">
                 Visualización del acopio de café y predicción mensual.
@@ -32,7 +33,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="bg-gray-50 rounded-xl border p-4 min-h-[360px]">
                     <h3 class="text-sm font-semibold text-gray-600 mb-2">
-                        Libras acopiadas por mes   
+                        Libras acopiadas por mes
                     </h3>
                     <div class="w-full overflow-x-auto">
                         <div id="grafico-libras-mes" class="min-w-[520px] h-[300px]"></div>
@@ -50,7 +51,7 @@
 
                 <div class="bg-gray-50 rounded-xl border p-4 min-h-[360px]">
                     <h3 class="text-sm font-semibold text-gray-600 mb-2">
-                        Productores que mas entregaron cafe
+                        Productores que más entregaron café
                     </h3>
                     <div class="w-full overflow-x-auto">
                         <div id="grafico-productores" class="min-w-[620px] h-[300px]"></div>
@@ -70,25 +71,156 @@
 
         <!-- PARTE DERECHA: PREDICCIÓN -->
         <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-5">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">
-                Predicción
-            </h2>
-
-            <div class="bg-gray-50 rounded-xl border p-4 min-h-[560px] flex flex-col justify-between">
+            <div class="flex justify-between items-start mb-4">
                 <div>
-                    <h3 class="text-sm font-semibold text-gray-600 mb-2">
-                        Predicción mensual de libras acopiadas
-                    </h3>
-
-                    <p class="text-gray-500 text-sm">
-                        En esta sección se integrará el modelo predictivo para estimar
-                        las libras acopiadas por mes hasta diciembre de 2026.
+                    <h2 class="text-xl font-semibold text-gray-700">
+                        Prediccion
+                    </h2>
+                    <p class="text-gray-500 text-sm mt-1">
+                        Estimación de libras a acopiar desde {{ mes_actual }} hasta diciembre de {{ gestion_actual }}.
                     </p>
                 </div>
 
-                <button class="bg-[#233b6e] hover:bg-[#1a2c53] text-white px-4 py-2 rounded-lg">
-                    Predecir
-                </button>
+                <span class="bg-[#233b6e] text-white text-xs px-3 py-1 rounded-full">
+                    Modelo Entrenado
+                </span>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl border p-4 min-h-[560px]">
+
+                {% if existe_archivo_predicciones %}
+
+                    {% if predicciones_hasta_diciembre %}
+
+                        <!-- TARJETAS RESUMEN 
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+                            <div class="bg-white rounded-xl border p-3">
+                                <p class="text-xs text-gray-500">
+                                    Total estimado
+                                </p>
+                                <h3 class="text-lg font-bold text-gray-800 mt-1">
+                                    {{ total_prediccion_hasta_diciembre|floatformat:2 }} lb
+                                </h3>
+                            </div>
+
+                            <div class="bg-white rounded-xl border p-3">
+                                <p class="text-xs text-gray-500">
+                                    Promedio mensual
+                                </p>
+                                <h3 class="text-lg font-bold text-gray-800 mt-1">
+                                    {{ promedio_prediccion_hasta_diciembre|floatformat:2 }} lb
+                                </h3>
+                            </div>
+
+                            <div class="bg-white rounded-xl border p-3">
+                                <p class="text-xs text-gray-500">
+                                    Mayor estimación
+                                </p>
+                                <h3 class="text-lg font-bold text-gray-800 mt-1">
+                                    {% if mes_mayor_prediccion %}
+                                        {{ mes_mayor_prediccion.nombre_mes }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </h3>
+                            </div>
+                        </div> -->
+
+                        <!-- GRÁFICO DE PREDICCIÓN -->
+                        <div class="bg-white rounded-xl border p-4 mb-5">
+                            <h3 class="text-sm font-semibold text-gray-600 mb-2">
+                                Predicción mensual de libras que seran acopiadas hasta diciembre
+                            </h3>
+
+                            <div class="w-full overflow-x-auto">
+                                <div id="grafico-prediccion-hasta-diciembre" class="min-w-[520px] h-[300px]"></div>
+                            </div>
+                        </div>
+
+                        <!-- TABLA DE PREDICCIONES -->
+                        <div class="bg-white rounded-xl border p-4">
+                            <h3 class="text-sm font-semibold text-gray-600 mb-3">
+                                Detalle de prediccion mensual
+                            </h3>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100 text-gray-700">
+                                            <th class="border px-3 py-2 text-left">Mes</th>
+                                            <th class="border px-3 py-2 text-left">Periodo</th>
+                                            <th class="border px-3 py-2 text-right">Libras estimadas</th>
+                                            <th class="border px-3 py-2 text-center">Nivel</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {% for item in predicciones_hasta_diciembre %}
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="border px-3 py-2">
+                                                    {{ item.nombre_mes }}
+                                                </td>
+
+                                                <td class="border px-3 py-2">
+                                                    {{ item.periodo }}
+                                                </td>
+
+                                                <td class="border px-3 py-2 text-right font-semibold text-gray-800">
+                                                    {{ item.prediccion_libras|floatformat:2 }}
+                                                </td>
+
+                                                <td class="border px-3 py-2 text-center">
+                                                    {% if item.nivel_acopio_estimado == "ALTO" %}
+                                                        <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">
+                                                            ALTO
+                                                        </span>
+                                                    {% elif item.nivel_acopio_estimado == "MEDIO" %}
+                                                        <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">
+                                                            MEDIO
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-xs font-semibold">
+                                                            BAJO
+                                                        </span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <p class="text-xs text-gray-500 mt-3">
+                                Las predicciones son estimaciones referenciales no son exactas
+                            </p>
+                        </div>
+
+                    {% else %}
+
+                        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-xl p-4">
+                            <h3 class="font-semibold mb-1">
+                                No hay predicciones disponibles para mostrar.
+                            </h3>
+                            <p class="text-sm">
+                                No se encontraron registros desde {{ mes_actual }} hasta diciembre de {{ gestion_actual }}.
+                            </p>
+                        </div>
+
+                    {% endif %}
+
+                {% else %}
+
+                    <div class="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4">
+                        <h3 class="font-semibold mb-1">
+                            Archivo de predicciones no encontrado.
+                        </h3>
+                        <p class="text-sm">
+                            Primero debes generar las predicciones futuras desde el módulo de modelo IA.
+                        </p>
+                    </div>
+
+                {% endif %}
+
             </div>
         </div>
 
@@ -261,11 +393,57 @@
         }
     }, configGrafico);
 
+    // 5. Predicción hasta diciembre
+    const datosPrediccion = JSON.parse('{{ datos_grafico_prediccion|escapejs }}');
+
+    if (
+        document.getElementById('grafico-prediccion-hasta-diciembre') &&
+        datosPrediccion.meses.length > 0
+    ) {
+        Plotly.newPlot('grafico-prediccion-hasta-diciembre', [{
+            x: datosPrediccion.meses,
+            y: datosPrediccion.libras,
+            type: 'bar',
+            marker: {
+                color: '#233b6e',
+                line: {
+                    color: 'rgba(255,255,255,0.9)',
+                    width: 1.5
+                }
+            },
+            text: datosPrediccion.libras.map(valor => valor.toLocaleString('es-BO') + ' lb'),
+            textposition: 'auto',
+            hovertemplate: '<b>%{x}</b><br>Predicción: %{y:.2f} lb<extra></extra>'
+        }], {
+            ...layoutBase,
+            margin: { l: 90, r: 25, t: 15, b: 70 },
+            yaxis: {
+                title: {
+                    text: 'Libras estimadas',
+                    standoff: 22
+                },
+                automargin: true,
+                gridcolor: 'rgba(156,163,175,0.25)'
+            },
+            xaxis: {
+                title: {
+                    text: 'Mes',
+                    standoff: 18
+                },
+                automargin: true
+            }
+        }, configGrafico);
+    }
+
     window.addEventListener('resize', function () {
         Plotly.Plots.resize('grafico-libras-mes');
         Plotly.Plots.resize('grafico-libras-comunidad');
         Plotly.Plots.resize('grafico-productores');
         Plotly.Plots.resize('grafico-total-pagado');
+
+        if (document.getElementById('grafico-prediccion-hasta-diciembre')) {
+            Plotly.Plots.resize('grafico-prediccion-hasta-diciembre');
+        }
     });
 </script>
 {% endblock %}
